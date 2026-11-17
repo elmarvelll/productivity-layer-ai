@@ -1,0 +1,29 @@
+{
+  "scope": "loopback HTTP fixture; not production latency or model quality",
+  "callbacks_per_turn": 7,
+  "rounds": 5,
+  "fresh_sessions": {
+    "connections": 35,
+    "requests": 35,
+    "median_ms": 1172.46,
+    "samples_ms": [
+      2805.69,
+      1172.46,
+      980.33,
+      1085.64,
+      1204.97
+    ]
+  },
+  "reused_session": {
+    "connections": 5,
+    "requests": 35,
+    "median_ms": 164.62,
+    "samples_ms": [
+      164.62,
+      170.38,
+      159.38,
+      129.96,
+      185.39
+    ]
+  }
+}

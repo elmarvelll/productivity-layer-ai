@@ -145,3 +145,10 @@ requests”, or “Who has applied to my Biology group?”. For creation, supply
 title, description and your contact details/invite link. Inspect the confirmation
 preview before approving. Confirm that an accepted applicant can see the shared
 details in Buddy System and that a different account cannot manage your listing.
+
+## Performance audit
+
+See [the latency audit](docs/performance/audit.md) for the request-path findings,
+connection-reuse benchmark, preserved correctness rules and the production timing
+fields available after redeploying both services. The local benchmark does not
+measure live Gemini/database latency.
