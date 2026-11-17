@@ -322,3 +322,46 @@ async def test_empty_final_reply_after_tool_requests_durable_backend_summary():
     assert 'saved operation results' in result['message']
     assert 'clarify' not in result['message']
     assert len(backend.calls) == 1
+
+
+@pytest.mark.parametrize('name,args', [
+    ('list_buddies', {'view': 'groups', 'search': 'Biology', 'page': 1}),
+    ('get_buddy', {'listing_id': 'listing-1'}),
+    ('create_buddy_group', {'title': 'Biology', 'description': 'Weekly study', 'invitation_url': 'https://t.me/+abcdef123', 'max_members': 5}),
+    ('create_buddy_request', {'title': 'Biology buddy', 'description': 'Study together', 'contact_details': 'Contact supplied by student'}),
+    ('apply_buddy', {'listing_id': 'listing-1'}),
+    ('accept_buddy_application', {'listing_id': 'listing-1', 'application_id': 'application-1'}),
+    ('decline_buddy_application', {'listing_id': 'listing-1', 'application_id': 'application-1'}),
+    ('close_buddy_listing', {'listing_id': 'listing-1'}),
+])
+def test_buddy_tools_reject_identity_injection(name, args):
+    assert validate_call(name, args) == args
+    with pytest.raises(ValueError):
+        validate_call(name, {**args, 'userId': 'someone-else'})
+
+
+@pytest.mark.parametrize('name,args', [
+    ('create_buddy_group', {'title': 'Group', 'description': 'Study'}),
+    ('create_buddy_request', {'title': 'Request', 'description': 'Study'}),
+    ('list_buddies', {'view': 'all-private-data'}),
+    ('list_buddies', {'page': 0}),
+    ('accept_buddy_application', {'listing_id': 'listing-1'}),
+])
+def test_buddy_tools_require_explicit_fields(name, args):
+    with pytest.raises(ValueError):
+        validate_call(name, args)
+
+
+async def test_buddy_reads_can_repeat_and_confirmation_stops_followup_changes():
+    backend = Backend(results=[{'status': 'completed', 'result': {'items': []}}] * 2 + [{'status': 'awaiting_confirmation'}])
+    provider = Provider([
+        call('list_buddies', {'view': 'groups'}),
+        call('list_buddies', {'view': 'groups'}),
+        types.Content(role='model', parts=[
+            types.Part.from_function_call(name='apply_buddy', args={'listing_id': 'listing-1'}),
+            types.Part.from_function_call(name='close_buddy_listing', args={'listing_id': 'listing-2'}),
+        ]),
+    ])
+    result = await orchestrate(backend, provider)
+    assert result['status'] == 'awaiting_confirmation'
+    assert [name for _, name, _ in backend.calls] == ['list_buddies', 'list_buddies', 'apply_buddy']

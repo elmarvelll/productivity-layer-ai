@@ -44,7 +44,8 @@ conversation history continues to come from AkadVerse.
 
 Supported tools cover ordinary tasks and scheduled work slots, recurring habits
 and outcomes, personal events/categories/backups, read-only official classes,
-bounded task/schedule analytics, and account timezone preferences. The authoritative
+bounded task/schedule analytics, account timezone preferences, and Buddy System browsing,
+listing creation, applications, applicant decisions and listing closure. The authoritative
 list and argument constraints are in `app/tools/definitions.json`.
 
 Reminders, official timetable edits, attendance writes, ordinary-task reopening,

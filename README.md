@@ -2,7 +2,7 @@
 
 This repository is the independently deployable PIP assistant extracted from
 `akadverse/akadverse-productivity-ai`. It preserves the existing Gemini agent,
-registered tools, request limits, delegated authentication, and backend callbacks.
+registered tools (including Buddy System actions), request limits, delegated authentication, and backend callbacks.
 It does not require the AkadVerse source checkout at runtime.
 
 AkadVerse remains the application backend: student login, productivity records,
@@ -123,3 +123,25 @@ AkadVerse and open `/studashboard/productivity-layer` → Assistant:
 These steps require a configured live backend and provider; mock tests and
 `/health` do not establish end-to-end deployment success.
 # productivity-layer-ai
+
+## Buddy System tools
+
+PIP can browse/search groups and buddy requests, list your created/joined/applied
+activity, inspect listings and visible applications, create study-group listings
+and buddy requests, apply, accept/decline applicants on your listings, and close
+your listings. All Buddy writes require the existing Confirm control. Groups
+require a user-supplied WhatsApp/Telegram invite; PIP does not create external
+groups. Requests require user-supplied contact details. Existing membership,
+capacity and privacy rules apply. Editing/deleting/reopening listings, leaving
+groups and removing members are not supported by the current Buddy backend.
+
+Deploy the companion AkadVerse changes alongside this service: the updated tool
+registry, assistant Buddy adapter, shared Buddy transaction functions, assistant
+tool dispatch and confirmation UI. AkadVerse's existing Buddy tables/migration
+must be installed. No additional environment variables are required.
+
+After deploying both services, try “List open study groups”, “Show my buddy
+requests”, or “Who has applied to my Biology group?”. For creation, supply a
+title, description and your contact details/invite link. Inspect the confirmation
+preview before approving. Confirm that an accepted applicant can see the shared
+details in Buddy System and that a different account cannot manage your listing.
