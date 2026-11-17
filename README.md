@@ -122,3 +122,4 @@ AkadVerse and open `/studashboard/productivity-layer` → Assistant:
 
 These steps require a configured live backend and provider; mock tests and
 `/health` do not establish end-to-end deployment success.
+# productivity-layer-ai
